@@ -17,7 +17,7 @@ Route::get('/', function () {
 
 
 // Here we should be able to see a button to send the user to paypal
-Route::get('pay-through-paypal', 'PaypalController@payThroughPaypal');
+Route::get('payment', 'PaypalController@payThroughPaypal');
 
 // This is where paypal will send the payment notification
 Route::post('ipn-resolver', 'PaypalController@resolveIpn');

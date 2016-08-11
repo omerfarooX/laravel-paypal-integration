@@ -14,7 +14,8 @@ class PaypalController extends Controller
 {
     public function payThroughPaypal()
     {
-        $processor = Subscription::processor('Paypal');
+        $proc = 'paypal';
+        $processor = Subscription::processor($proc);
 
         $userData = array(
             'name' => 'jack Danyials',
@@ -26,8 +27,6 @@ class PaypalController extends Controller
             'email' => 'test@example.com',
             'phone' => '+11231231232'
         );
-        $consumer = new SubscriptionConsumer($userData['name'], $userData['address'], $userData['city'], $userData['state'], $userData['zip'], $userData['country'], $userData['email'], $userData['phone'] );
-
 
         $productData = array(
             'title' => 'Product name',
@@ -42,23 +41,16 @@ class PaypalController extends Controller
         );
         $product = new SubscriptionProduct($productData['title'], $productData['price'], $productData['description'], $productData['ipnUrl'], $productData['returnUrl'], $productData['cancelUrl'], $productData['discount'], $productData['frequency'], $productData['recurrence'], $productData['discount'] );
 
-        // Generating a random cart id
-        $id = Str::random(30);
+        $cart_id = Str::random(30);
 
-        $processor->complete($id, $product, $consumer);
-    }
+        if($proc == 'paypal'){
 
+            return $processor->complete($cart_id, $product);
+        }else{
+            $consumer = new SubscriptionConsumer($userData['name'], $userData['address'], $userData['city'], $userData['state'], $userData['zip'], $userData['country'], $userData['email'], $userData['phone'] );
+            return $processor->complete($cart_id, $product, $consumer);
+        }
 
-    public function resolveIpn(){
-        // This is where Paypal will send the notification
-        // Verify that the Paypal's notification is correct
-    }
-
-    public function paymentSuccess(){
-        // Once the payment is successful the user will be redirected over here
-    }
-
-    public function paymentCancel(){
-        // If the payment is canceled on the paypal's website, the user will be redirected over here
+        $processor->complete($cart_id, $product, $consumer);
     }
 }
